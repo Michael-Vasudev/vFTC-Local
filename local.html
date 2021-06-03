@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+  <!-- https://www.youtube.com/watch?v=r9ZTWQtzk2Y -->
+  <!-- <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline'; script-src-elem 'self' 'unsafe-inline' https://developers.google.com/blockly/xml">
+  <meta http-equiv="X-Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline'; script-src-elem 'self' 'unsafe-inline' https://developers.google.com/blockly/xml"> -->
+  <title>Virtual Robot Simulator Controller</title>
+  <style>
+    body {
+      background-color: #242424;
+    }
+
+    h1 {
+      margin-top: 0%;
+      padding-left: 20px;
+      font-weight: normal;
+      font-size: 50px;
+      font-family: Jura;
+      color: white;
+    }
+
+    h2 {
+      font-size: 10px;
+      font-family: Jura;
+      color: white;
+    }
+
+    .center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
+    .center-horizontal {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    @font-face {
+      font-family: 'Jura';
+      src: url('./blocks/fonts/Jura-Light.ttf');
+    }
+
+    .blocklyText,
+    .blocklyHtmlInput,
+    .blocklyTreeLabel {
+      font-family: 'Jura', sans-serif !important;
+    }
+
+    .blocklyTreeLabel {
+      font-size: 20px !important;
+    }
+
+    .blocklyTreeRow {
+      height: 28px !important;
+      margin-top: 5px !important;
+    }
+
+    input:focus,
+    textarea:focus,
+    div:focus,
+    select:focus {
+      outline: none;
+    }
+
+
+    .button1 {
+      background-color: white;
+      /* Green */
+      border-radius: 12px;
+      color: #242424;
+      padding: 16px 32px;
+      text-align: center;
+      font-family: Jura;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 26px;
+      margin: 20px 20px;
+      transition-duration: 0.4s;
+      cursor: pointer;
+      padding: 10px;
+    }
+
+    .button1 {
+      background-color: #242424;
+      color: white;
+      border: 2px solid white;
+    }
+
+    .button1:hover {
+      background-color: white;
+      color: #242424;
+    }
+
+    .button1:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    .chevron::before {
+      border-style: solid;
+      border-width: 0.25em 0.25em 0 0;
+      content: '';
+      display: inline-block;
+      height: 0.45em;
+      left: 0.15em;
+      position: relative;
+      top: 0.15em;
+      transform: rotate(-45deg);
+      vertical-align: top;
+      width: 0.45em;
+      color: white;
+    }
+
+    .chevron.left:before {
+      left: 0.25em;
+      transform: rotate(-135deg);
+    }
+  </style>
+</head>
+
+<body>
+
+  <script src="./blocks/blockly/blockly_compressed.js"></script>
+  <script src="./blocks/blockly/blocks_compressed.js"></script>
+  <script src="./blocks/blockly/msg/js/en.js"></script>
+  <script src="./blocks/interpreter/acorn_interpreter.js"></script>
+  <script src="./blocks/blockly/javascript_compressed.js"></script>
+
+  <div style="display: flex;">
+    <a href="homepage.html" id="backButton"><span class="chevron left"></span></a>
+  </div>
+
+
+  <div class="container" style="display: flex; height: 100%; padding-top: 5px;">
+    <div id="blocklyDiv" style="width: 50%; border:1px solid white;"></div>
+    <div style="width: 50%; background-color: #242424; padding-left: 10px;">
+      <div id="controlPanel" style="height: 50%; background-color: #242424; border:1px solid white;">
+        <h1>Control Panel</h1>
+        <div class="center-horizontal">
+          <button class="button1" onclick="startProgram()">Start Program</button>
+          <button class="button1">Stop Program</button>
+          <button class="button1" onclick="resetField()">Reset Field</button>
+          <button class="button1">Start Match</button>
+        </div>
+        <div class="center-horizontal">
+          <button class="button1">Save Program</button>
+          <button class="button1">Load Program</button>
+        </div>
+      </div>
+      <div id="fieldView" style="height: 50%; margin-top: 10px; background-color: #000000;">
+        <iframe scrolling="no" src="./webgl/index.html" id="fieldViewiframe" width="100%" height="100%" frameBorder="0"
+          hidden></iframe>
+        <div class="center" id="loadingTextDiv">
+          <h1 id="loadingText">Loading Field</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
+    <category name="Actuators" colour="#f58a42" toolboxitemid="motorCategory">
+      <block type="moveInDirection"></block>
+      <block type="moveInDirectionWithEncoders"></block>
+      <block type="setMotorPower"></block>
+      <block type="getMotorEncoders"></block>
+    </category>
+    <category name="Logic" colour="210" toolboxitemid="logicCategory">
+      <block type="controls_if"></block>
+      <block type="controls_ifelse"></block>
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_negate"></block>
+      <block type="logic_boolean"></block>
+      <block type="logic_null"></block>
+      <block type="logic_ternary"></block>
+    </category>
+    <category name="Loops" colour="110" toolboxitemid="loopsCategory">
+      <block type="controls_repeat"></block>
+      <block type="controls_whileUntil"></block>
+      <block type="controls_for"></block>
+      <block type="controls_forEach"></block>
+      <block type="controls_flow_statements"></block>
+    </category>
+    <category name="Math" colour="230" toolboxitemid="mathCategory">
+      <block type="math_number"></block>
+      <block type="math_arithmetic"></block>
+      <block type="math_single"></block>
+      <block type="math_trig"></block>
+      <block type="math_atan2"></block>
+      <block type="math_constant"></block>
+      <block type="math_number_property"></block>
+      <block type="math_round"></block>
+      <block type="math_on_list"></block>
+      <block type="math_modulo"></block>
+      <block type="math_constrain"></block>
+      <block type="math_random_int"></block>
+      <block type="math_random_float"></block>
+    </category>
+    <category name="Text" colour="150" toolboxitemid="textCategory">
+      <block type="text"></block>
+      <block type="text_join"></block>
+      <block type="text_append"></block>
+      <block type="text_length"></block>
+      <block type="text_isEmpty"></block>
+      <block type="text_indexOf"></block>
+      <block type="text_charAt"></block>
+      <block type="text_getSubstring"></block>
+      <block type="text_changeCase"></block>
+      <block type="text_trim"></block>
+    </category>
+    <category name="Lists" colour="255" toolboxitemid="listCategory">
+      <block type="lists_create_empty"></block>
+      <block type="lists_create_with"></block>
+      <block type="lists_repeat"></block>
+      <block type="lists_length"></block>
+      <block type="lists_isEmpty"></block>
+      <block type="lists_getIndex"></block>
+      <block type="lists_setIndex"></block>
+      <block type="lists_getSublist"></block>
+      <block type="lists_split"></block>
+      <block type="lists_sort"></block>
+    </category>
+    <category name="Variables" colour="#a3392c" custom="VARIABLE" toolboxitemid="variablesCategory"></category>
+    <category name="Functions" colour="285" custom="PROCEDURE" toolboxitemid="functionsCategory"></category>
+    <category name="Miscellaneous" colour="230" toolboxitemid="miscellaneousCategory">
+    </category>
+  </xml>
+
+  <script>
+    var shouldBeUpdatingLoadingText = true;
+    var counterForLoadingText = 1;
+    document.getElementById('blocklyDiv').style.height = screen.height - 44 + "px";
+    document.getElementById('controlPanel').style.height = screen.height / 2 - 27 + "px";
+    document.getElementById('fieldView').style.height = screen.height / 2 - 27 + "px";
+
+    setTimeout(function () {
+      shouldBeUpdatingLoadingText = false;
+      document.getElementById('fieldViewiframe').hidden = false;
+      document.getElementById('loadingText').remove();
+      document.getElementById('loadingTextDiv').remove();
+    }, 3000);
+
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+
+
+    const updateLoadingText = async () => {
+      while (shouldBeUpdatingLoadingText) {
+        if (counterForLoadingText == 1) {
+          document.getElementById('loadingText').innerHTML = "Loading Field."
+        } else if (counterForLoadingText == 2) {
+          document.getElementById('loadingText').innerHTML = "Loading Field.."
+        } else if (counterForLoadingText == 3) {
+          document.getElementById('loadingText').innerHTML = "Loading Field..."
+          counterForLoadingText = 0;
+        }
+        counterForLoadingText++;
+        await delay(500);
+      }
+    }
+    updateLoadingText();
+
+
+    function startProgram() {
+      window.udpSocket.initSimulatorSocket('0.0.0.0');
+      var code = Blockly.JavaScript.workspaceToCode(workspace);
+      var myInterpreter = new Interpreter(code);
+      function initApi(interpreter, globalObject) {
+        var wrapper = function (id) {
+          return workspace.highlightBlock(id);
+        };
+        interpreter.setProperty(globalObject, 'highlightBlock',
+          interpreter.createNativeFunction(wrapper));
+      }
+      myInterpreter = new Interpreter(code, initApi);
+
+      myInterpreter.run();
+      function nextStep() {
+        if (myInterpreter.step()) {
+          nextStep();
+        } else {
+          window.udpSocket.close();
+        }
+      }
+      nextStep();
+    }
+
+    function resetField() {
+      var client = new window.net.Socket();
+      client.connect(9052, '0.0.0.0', function () {
+        console.log('Connected');
+        client.write(JSON.stringify({ "resetField": true }));
+        // client.write(JSON.stringify({ "resetField": false }));
+      });
+
+      client.on('data', function (data) {
+        console.log('Received: ' + data);
+      });
+
+      client.on('close', function () {
+        console.log('Connection closed');
+      });
+    }
+
+    Blockly.JavaScript['onOpmodeStart'] = function (block) {
+      return 'Started Program';
+    };
+
+    Blockly.JavaScript['moveInDirection'] = function (block) {
+      var value = block.getFieldValue('angleToMoveAt');
+      var value2 = block.getFieldValue('power');
+      motorPowers = { "motor1": value2, "motor2": -value2, "motor3": value2, "motor4": -value2, "motor5": 0.0, "motor6": 0.0, "motor7": 0.0, "motor8": 0.0 };
+      window.udpSocket.sendDataToSimulator("0.0.0.0", JSON.stringify(motorPowers));
+      return 'Move In Direction Called';
+    };
+
+    Blockly.JavaScript['moveInDirectionWithEncoders'] = function (block) {
+      // var value = block.getFieldValue('angleToMoveAt');
+      // var value2 = block.getFieldValue('time');
+      motorPowers = { "motor1": 1.0, "motor2": 1.0, "motor3": 1.0, "motor4": 1.0, "motor5": 0.0, "motor6": 0.0, "motor7": 0.0, "motor8": 0.0 };
+      window.udpSocket.sendDataToSimulator("0.0.0.0", JSON.stringify(motorPowers));
+      var isWaitingForTime = true;
+      setTimeout(() => {
+        motorPowers = { "motor1": 0.0, "motor2": 0.0, "motor3": 0.0, "motor4": 0.0, "motor5": 0.0, "motor6": 0.0, "motor7": 0.0, "motor8": 0.0 };
+        window.udpSocket.sendDataToSimulator("0.0.0.0", JSON.stringify(motorPowers));
+        console.log("World!");
+        isWaitingForTime = false;
+      }, 1000);
+
+      // console.log("waiting for " + (value2 * 1000))
+      // while (isWaitingForTime) {
+
+      // }
+      return 'Move In Direction Called';
+    };
+
+    var workspace = Blockly.inject('blocklyDiv',
+      {
+        media: './blocks/media/',
+        toolbox: document.getElementById('toolbox'),
+        move: {
+          scrollbars: true,
+          drag: false,
+          wheel: false
+        },
+        theme: {
+          'base': Blockly.Themes.Classic,
+          'fontStyle': {
+            "weight": "bold",
+            "size": 12
+          },
+          'componentStyles': {
+            'workspaceBackgroundColour': '#242424',
+            "toolboxBackgroundColour": "#333",
+            "scrollbarColour": "#424242",
+            "toolboxForegroundColour": "#FFFFFF",
+            "flyoutBackgroundColour": "#424242"
+          }
+        },
+        grid: {
+          spacing: 50,
+          length: 5,
+          colour: '#505050',
+        },
+        trashcan: true,
+        zoom: {
+          controls: true,
+          wheel: true,
+          startScale: 1.0,
+          maxScale: 3,
+          minScale: 0.3,
+          scaleSpeed: 1.2,
+          pinch: true
+        },
+
+      });
+    Blockly.defineBlocksWithJsonArray([
+      {
+        "type": "onOpmodeStart",
+        "message0": "on opmode start",
+        "tooltip": "Code attached to this block will run on start",
+        "nextStatement": null,
+        "colour": "#4287f5",
+      },
+      {
+        "type": "moveInDirection",
+        "message0": "move at %1 degrees at %2 power",
+        "tooltip": "Moves the robot in any given direction at any power",
+        "colour": "#f58a42",
+        "nextStatement": null,
+        "previousStatement": null,
+        "args0": [
+          {
+            "type": "field_angle",
+            "name": "angleToMoveAt",
+            "angle": 90
+          },
+          {
+            "type": "field_number",
+            "name": "power",
+            "value": 1.0,
+            "min": -1.0,
+            "max": 1.0,
+            "precision": 0.001
+          }
+        ]
+      },
+      {
+        "type": "moveInDirectionWithEncoders",
+        "message0": "move forward",
+        "tooltip": "Moves the robot in any given direction for a given amount of time",
+        "colour": "#f58a42",
+        "nextStatement": null,
+        "previousStatement": null,
+        // "args0": [
+        //   {
+        //     "type": "field_angle",
+        //     "name": "angleToMoveAt",
+        //     "angle": 90
+        //   },
+        //   {
+        //     "type": "field_number",
+        //     "name": "time",
+        //     "value": 5,
+        //     "min": 1,
+        //     "max": 50,
+        //     "precision": 1
+        //   }
+        // ]
+      },
+      {
+        "type": "setMotorPower",
+        "message0": "set power of %1 to %2",
+        "tooltip": "Sets the power of a given motor from -1 to 1",
+        "colour": "#f58a42",
+        "nextStatement": null,
+        "previousStatement": null,
+        "args0": [
+          {
+            "type": "field_dropdown",
+            "options": [
+              ["frontLeft", "frontLeft"],
+              ["frontRight", "frontRight"],
+              ["backLeft", "backLeft"],
+              ["backRight", "backRight"],
+            ]
+          },
+          {
+            "type": "field_number",
+            "name": "power",
+            "value": 1.0,
+            "min": -1.0,
+            "max": 1.0,
+            "precision": 0.001
+          }
+        ]
+      },
+      {
+        "type": "getMotorEncoders",
+        "message0": "encoder value of %1",
+        "tooltip": "Reads the encoder value of a given motor",
+        "colour": "#f58a42",
+        "output": "Number",
+        "args0": [
+          {
+            "type": "field_dropdown",
+            "options": [
+              ["frontLeft", "frontLeft"],
+              ["frontRight", "frontRight"],
+              ["backLeft", "backLeft"],
+              ["backRight", "backRight"],
+            ]
+          }
+        ]
+      }
+    ]);
+    Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom('<xml><block type="onOpmodeStart" deletable="false" movable="true"></block></xml>'), workspace);
+  </script>
+</body>
+
+</html>

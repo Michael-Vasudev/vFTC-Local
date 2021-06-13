@@ -4,10 +4,13 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Unity WebGL Player | Robot Controller</title>
+  <title>Unity WebGL Player | Robot Simulator</title>
   <link rel="shortcut icon" href="TemplateData/favicon.ico">
   <link rel="stylesheet" href="TemplateData/style.css">
 </head>
+<!-- JUST PUT THIS STUFF IN LOCAL.HTML AND USE UNITY INSTANCE!! -->
+
+<script type="text/javascript" src="../unityInstanceHandler.js"></script>
 
 <body>
   <div id="unity-container" class="unity-desktop">
@@ -24,19 +27,19 @@
     <div id="unity-footer">
       <div id="unity-webgl-logo"></div>
       <div id="unity-fullscreen-button"></div>
-      <div id="unity-build-title">Robot Controller</div>
+      <div id="unity-build-title">Robot Simulator</div>
     </div>
   </div>
-  <script>
+  <script type="text/javascript">
     var buildUrl = "Build";
-    var loaderUrl = buildUrl + "/vFTC-Field_WEBGL-5-21a.loader.js";
+    var loaderUrl = buildUrl + "/VirtualFTC Builds (webgl).loader.js";
     var config = {
-      dataUrl: buildUrl + "/vFTC-Field_WEBGL-5-21a.data.unityweb",
-      frameworkUrl: buildUrl + "/vFTC-Field_WEBGL-5-21a.framework.js.unityweb",
-      codeUrl: buildUrl + "/vFTC-Field_WEBGL-5-21a.wasm.unityweb",
+      dataUrl: buildUrl + "/VirtualFTC Builds (webgl).data",
+      frameworkUrl: buildUrl + "/VirtualFTC Builds (webgl).framework.js",
+      codeUrl: buildUrl + "/VirtualFTC Builds (webgl).wasm",
       streamingAssetsUrl: "StreamingAssets",
-      companyName: "DefaultCompany",
-      productName: "Robot Controller",
+      companyName: "VirtualFTC",
+      productName: "Robot Simulator",
       productVersion: "0.1",
     };
 
@@ -70,14 +73,15 @@
     loadingBar.style.display = "block";
 
     var script = document.createElement("script");
-    var myGameInstance = null;
     script.src = loaderUrl;
     script.onload = () => {
       createUnityInstance(canvas, config, (progress) => {
         progressBarFull.style.width = 100 * progress + "%";
       }).then((unityInstance) => {
+        console.log("WROTE: " + unityInstance);
+        UnityInstance = unityInstance;
+
         loadingBar.style.display = "none";
-        unityInstance.SendMessage("User-1", "stopGame");
         fullscreenButton.onclick = () => {
           unityInstance.SetFullscreen(1);
         };

@@ -48,6 +48,19 @@
       src: url('./blocks/fonts/Jura-Light.ttf');
     }
 
+    .disable-select {
+      user-select: none;
+      /* supported by Chrome and Opera */
+      -webkit-user-select: none;
+      /* Safari */
+      -khtml-user-select: none;
+      /* Konqueror HTML */
+      -moz-user-select: none;
+      /* Firefox */
+      -ms-user-select: none;
+      /* Internet Explorer/Edge */
+    }
+
     .blocklyText,
     .blocklyHtmlInput,
     .blocklyTreeLabel {
@@ -127,7 +140,7 @@
   </style>
 </head>
 
-<body>
+<body class="disable-select">
   <script src="./blocks/blockly/blockly_compressed.js"></script>
   <script src="./blocks/blockly/blocks_compressed.js"></script>
   <script src="./blocks/blockly/msg/js/en.js"></script>
@@ -156,7 +169,7 @@
         </div>
       </div>
       <div id="fieldView" style="height: 50%; margin-top: 10px; background-color: #000000;">
-        <iframe src="./webgl/index.html" id="fieldViewiframe" width="100%" height="100%" frameBorder="0"
+        <iframe scrolling="no" src="./webgl/index.html" id="fieldViewiframe" width="100%" height="100%" frameBorder="0"
           hidden></iframe>
         <div class="center" id="loadingTextDiv">
           <h1 id="loadingText">Loading Field</h1>

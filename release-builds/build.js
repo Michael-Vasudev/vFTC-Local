@@ -11,10 +11,6 @@ var settings = {
     authors: 'Virtual Robot Simulator',
     // The name of the executable of your built
     exe: './VRS.exe',
-    // The name of the gif for loading
-    loadingGif: './vrs.gif',
-    iconUrl: 'logo.ico',
-    setupIcon: 'logo.ico'
 };
 
 resultPromise = electronInstaller.createWindowsInstaller(settings);

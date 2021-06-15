@@ -1,10 +1,12 @@
 {
-  "name": "Virtual Robot Simulator Platform",
+  "name": "VRS",
   "version": "1.0.0",
   "description": "Downloadable Virtual Robot Simulator Platform",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package-win": "electron-packager . --platform=win32 --arch=x64 --prune=true --out=release-builds --icon=logo.ico --overwrite",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --prune=true --arch=x64 --out=release-builds --icon=teledrive.icns"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [

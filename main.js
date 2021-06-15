@@ -11,26 +11,13 @@ function createWindow() {
         preload: path.join(app.getAppPath(), 'preload.js'),
         devTools: false,
         contextIsolation: false,
-        nodeIntegration: true,
-        backgroundColor: '#323232',
       },
-      resizable: false,
       frame: false,
       icon: 'logo.png'
     })
 
     mainWindow.maximize();
-    mainWindow.setMenuBarVisibility(false)
-    //Disable Keyboard Commands (Reload from CommandOrControl+R or F5)
-    const electronLocalshortcut = require('electron-localshortcut')
-
-    mainWindow.on('focus', (event) => {
-      electronLocalshortcut.register(mainWindow, ['CommandOrControl+R', 'CommandOrControl+Shift+R', 'F5'], () => { })
-    })
-
-    mainWindow.on('blur', (event) => {
-      electronLocalshortcut.unregisterAll(mainWindow)
-    })
+    // mainWindow.setMenuBarVisibility(false);
 
     mainWindow.loadFile('homepage.html')
   } else {

@@ -70,18 +70,6 @@
       outline: none;
     }
 
-    .disable-select {
-      user-select: none;
-      /* supported by Chrome and Opera */
-      -webkit-user-select: none;
-      /* Safari */
-      -khtml-user-select: none;
-      /* Konqueror HTML */
-      -moz-user-select: none;
-      /* Firefox */
-      -ms-user-select: none;
-      /* Internet Explorer/Edge */
-    }
 
     .button1 {
       background-color: white;
@@ -139,7 +127,7 @@
   </style>
 </head>
 
-<body class="disable-select">
+<body>
 
   <div style="display: flex;">
     <a href="homepage.html" id="backButton"><span class="chevron left"></span></a>
@@ -160,7 +148,7 @@
 
 
   <script>
-    localStorage.setItem('playMode', "TeleOp")
+    localStorage.setItem('playMode', "TeleOp");
     var shouldBeUpdatingLoadingText = true;
     var counterForLoadingText = 1;
     document.getElementById('fieldView').style.height = screen.height - 42 + "px";

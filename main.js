@@ -17,7 +17,7 @@ function createWindow() {
     })
 
     mainWindow.maximize();
-    // mainWindow.setMenuBarVisibility(false);
+    mainWindow.setMenuBarVisibility(false);
 
     mainWindow.loadFile('homepage.html')
   } else {

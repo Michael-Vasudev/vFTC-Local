@@ -7,7 +7,7 @@ function check() {
             UnityInstance.SendMessage("Main Menu", "changeSinglePlayer");
             alreadySetPlayMode = true;
         } else if (playMode == "TeleOp" && !alreadySetPlayMode) {
-            alert("VRS Multiplayer is optimized with fullscreen mode. Please click on the blue button below the game window.");
+            // alert("VRS Multiplayer is optimized with fullscreen mode. Please click on the blue button below the game window.");
             alreadySetPlayMode = true;
         }
         setTimeout(writeMotorPowers, 500);

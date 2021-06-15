@@ -1,6 +1,13 @@
 UnityInstance = null;
+var alreadySetPlayMode = false;
 function check() {
     if (UnityInstance != null) {
+        var playMode = localStorage.getItem('playMode');
+        if (playMode == "Autonomous" && !alreadySetPlayMode) {
+            console.log("CALLED");
+            UnityInstance.SendMessage("PhotonNetworkPlayer(Clone)", "changeSinglePlayer");
+            alreadySetPlayMode = true;
+        }
         setTimeout(writeMotorPowers, 500);
     } else {
         setTimeout(check, 500);

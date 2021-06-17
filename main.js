@@ -14,7 +14,7 @@ function createWindow() {
     const mainWindow = new BrowserWindow({
       webPreferences: {
         preload: path.join(app.getAppPath(), 'preload.js'),
-        devTools: false,
+        // devTools: false,
         contextIsolation: false,
       },
       frame: false,

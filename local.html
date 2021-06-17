@@ -386,30 +386,21 @@
 
     function startProgram() {
       motorPowers = { "m1": 0.0, "m2": 0.0, "m3": 0.0, "m4": 0.0 };
-      var code = Blockly.JavaScript.workspaceToCode(workspace);
+      var code = Blockly.JavaScript.workspaceToCode(Blockly.mainWorkspace);
       var myInterpreter = new Interpreter(code);
-      function initApi(interpreter, globalObject) {
-        var wrapper = function (id) {
-          return workspace.highlightBlock(id);
-        };
-        interpreter.setProperty(globalObject, 'highlightBlock',
-          interpreter.createNativeFunction(wrapper));
-      }
-      myInterpreter = new Interpreter(code, initApi);
-
       myInterpreter.run();
-      function nextStep() {
-        if (myInterpreter.step()) {
-          nextStep();
-        }
+      // nextStep();
+    }
+
+    function nextStep() {
+      if (myInterpreter.step()) {
+        setTimeout(nextStep, 1000);
       }
-      nextStep();
     }
 
 
     function stopProgram() {
       var motorPowers = { "m1": 0.0, "m2": 0.0, "m3": 0.0, "m4": 0.0 };
-
       localStorage.setItem('motorPowers', JSON.stringify(motorPowers));
     }
 
@@ -453,7 +444,7 @@
     };
 
     Blockly.JavaScript['pause'] = function (block) {
-      delayTime = 500;
+      delayTime = block.getFieldValue('delayTime');
       return 'Delay';
     };
 
@@ -516,7 +507,9 @@
           {
             "type": "field_number",
             "name": "delayTime",
-            "value": 1000
+            "value": 1000,
+            "min": 100,
+            "max": 10000
           }
         ]
       },

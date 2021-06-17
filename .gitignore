@@ -1,4 +1,2 @@
 node_modules
-release-builds/VRS-win32-x64
-release-builds/VRS-win32-x64-Installer
-release-builds/VRS-darwin-x64
+release-builds

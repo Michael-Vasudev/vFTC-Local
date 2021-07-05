@@ -10,7 +10,9 @@ function check() {
             // alert("VRS Multiplayer is optimized with fullscreen mode. Please click on the blue button below the game window.");
             alreadySetPlayMode = true;
         }
-        setTimeout(writeMotorPowers, 500);
+        if (playMode == "Autonomous") {
+            setTimeout(writeMotorPowers, 500);
+        }
     } else {
         setTimeout(check, 500);
     }

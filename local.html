@@ -19,7 +19,7 @@
       margin-top: 0%;
       padding-left: 20px;
       font-weight: normal;
-      font-size: 50px;
+      font-size: 40px;
       font-family: Jura;
       color: white;
     }
@@ -190,6 +190,9 @@
   <script src="./blocks/blockly/msg/js/en.js"></script>
   <script src="./blocks/interpreter/acorn_interpreter.js"></script>
   <script src="./blocks/blockly/javascript_compressed.js"></script>
+  <script src="./codemirror/lib/codemirror.js"></script>
+  <link rel="stylesheet" href="./codemirror/lib/codemirror.css">
+  <script src="./codemirror/mode/javascript/javascript.js"></script>
 
   <div style="display: flex;">
     <a href="homepage.html" id="backButton"><span class="chevron left"></span></a>
@@ -198,14 +201,20 @@
 
   <div class="container" style="display: flex; height: 100%; padding-top: 5px;">
     <div id="blocklyDiv" style="width: 50%; border:1px solid white;"></div>
+    <div id="onBotJavaDiv" style="width: 50%; border:1px solid white;" hidden>
+      <h1 id="loadingOBJText">Loading OnBotJava</h1>
+    </div>
     <div style="width: 50%; background-color: #242424; padding-left: 10px;">
       <div id="controlPanel" style="height: 50%; background-color: #242424; border:1px solid white;">
+        <h1>Programming Environment</h1>
+        <div class="center-horizontal">
+          <button class="button1" onclick="switchToBlocks()">Blocks</button>
+          <button class="button1" onclick="switchToOnBotJava()">OnBotJava</button>
+        </div>
         <h1>Control Panel</h1>
         <div class="center-horizontal">
           <button class="button1" onclick="startProgram()">Start Program</button>
           <button class="button1" onclick="stopProgram()">Stop Program</button>
-          <button class="button1" onclick="resetField()">Reset Field</button>
-          <button class="button1">Start Match</button>
         </div>
         <div class="center-horizontal">
           <button class="button1" onclick="prepareUiToSaveProgram()">Save Program</button>
@@ -305,6 +314,7 @@
   </xml>
 
   <script>
+    var isUsingBlocks = true;
     var delayTime = 0;
     var motorPowers = { "m1": 0.0, "m2": 0.0, "m3": 0.0, "m4": 0.0 };
 
@@ -313,7 +323,6 @@
 
     var shouldBeUpdatingLoadingText = true;
     var counterForLoadingText = 1;
-    document.getElementById('blocklyDiv').style.height = screen.height - 44 + "px";
     document.getElementById('controlPanel').style.height = screen.height / 2 - 27 + "px";
     document.getElementById('fieldView').style.height = screen.height / 2 - 27 + "px";
 
@@ -342,6 +351,29 @@
       }
     }
     updateLoadingText();
+
+    function switchToBlocks() {
+      document.getElementById('blocklyDiv').hidden = false;
+      document.getElementById('onBotJavaDiv').hidden = true;
+      isUsingBlocks = true;
+    }
+
+    function switchToOnBotJava() {
+      document.getElementById('blocklyDiv').hidden = true;
+      document.getElementById('onBotJavaDiv').hidden = false;
+      isUsingBlocks = false;
+      setUpOnBotJava();
+    }
+
+    function setUpOnBotJava() {
+      var myCodeMirror = CodeMirror(function (elt) {
+        document.getElementById('onBotJavaDiv').replaceChild(elt, document.getElementById('loadingOBJText'));
+      }, {
+        value: "function myScript(){return 100;}\n",
+        mode: "javascript",
+        theme: "3024-night",
+      });
+    }
 
     function prepareUiToSaveProgram() {
       document.getElementById("saveProgramDiv").style = null;
@@ -402,10 +434,6 @@
     function stopProgram() {
       var motorPowers = { "m1": 0.0, "m2": 0.0, "m3": 0.0, "m4": 0.0 };
       localStorage.setItem('motorPowers', JSON.stringify(motorPowers));
-    }
-
-    function resetField() {
-
     }
 
     Blockly.JavaScript['onOpmodeStart'] = function (block) {

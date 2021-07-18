@@ -193,9 +193,24 @@
   <script src="./blocks/blockly/msg/js/en.js"></script>
   <script src="./blocks/interpreter/acorn_interpreter.js"></script>
   <script src="./blocks/blockly/javascript_compressed.js"></script>
+
   <script src="./codemirror/lib/codemirror.js"></script>
   <link rel="stylesheet" href="./codemirror/lib/codemirror.css">
-  <script src="./codemirror/mode/javascript/javascript.js"></script>
+  <link rel="stylesheet" href="./codemirror/theme/darcula.css">
+
+  <script src="./codemirror/addon/edit/closebrackets.js"></script>
+  <script src="./codemirror/addon/comment/comment.js"></script>
+  <script src="./codemirror/addon/fold/foldcode.js"></script>
+  <script src="./codemirror/addon/fold/foldgutter.js"></script>
+  <script src="./codemirror/addon/fold/brace-fold.js"></script>
+  <script src="./codemirror/addon/fold/comment-fold.js"></script>
+  <script src="./codemirror/addon/fold/indent-fold.js"></script>
+
+  <link rel="stylesheet" href="./codemirror/addon/hint/show-hint.css">
+  <script src="./codemirror/addon/hint/show-hint.js"></script>
+  <script src="./codemirror/mode/clike/clike.js"></script>
+
+
 
   <div style="display: flex;">
     <a href="homepage.html" id="backButton"><span class="chevron left"></span></a>
@@ -412,6 +427,7 @@
     var counterForLoadingText = 1;
     document.getElementById('controlPanel').style.height = screen.height / 2 - 27 + "px";
     document.getElementById('fieldView').style.height = screen.height / 2 - 27 + "px";
+    document.getElementById('onBotJavaDiv').style.height = screen.height - 44 + "px";
 
     setTimeout(function () {
       shouldBeUpdatingLoadingText = false;
@@ -456,14 +472,22 @@
       var myCodeMirror = CodeMirror(function (elt) {
         document.getElementById('onBotJavaDiv').replaceChild(elt, document.getElementById('loadingOBJText'));
       }, {
-        value: "function myScript(){return 100;}\n",
-        mode: "javascript",
-        // theme: "3024-night",
+        value: "public static int myScript(){return 100;}",
+        mode: "text/x-java",
+        lineNumbers: true,
+        theme: "darcula",
+        scrollbarStyle: null,
+        autocorrect: true,
+        autoCloseBrackets: true,
       });
     }
 
     function prepareUiToSaveProgram() {
-      document.getElementById("saveProgramDiv").style = null;
+      if (document.getElementById("saveProgramDiv").style.length > 0) {
+        document.getElementById("saveProgramDiv").style = null;
+      } else {
+        document.getElementById("saveProgramDiv").style = "display: none;";
+      }
     }
 
     function prepareUiToLoadProgram() {
@@ -583,7 +607,8 @@
             "toolboxBackgroundColour": "#333",
             "scrollbarColour": "#424242",
             "toolboxForegroundColour": "#FFFFFF",
-            "flyoutBackgroundColour": "#424242"
+            "flyoutBackgroundColour": "#424242",
+            "markerColour": "#FFFFFF"
           }
         },
         grid: {

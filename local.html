@@ -209,6 +209,7 @@
   <link rel="stylesheet" href="./codemirror/addon/hint/show-hint.css">
   <script src="./codemirror/addon/hint/show-hint.js"></script>
   <script src="./codemirror/mode/clike/clike.js"></script>
+  <script src="./codemirror/lib/util/formatting.js"></script>
 
 
 
@@ -467,12 +468,12 @@
       isUsingBlocks = false;
       setUpOnBotJava();
     }
-
+    var editor;
     function setUpOnBotJava() {
-      var myCodeMirror = CodeMirror(function (elt) {
+      editor = CodeMirror(function (elt) {
         document.getElementById('onBotJavaDiv').replaceChild(elt, document.getElementById('loadingOBJText'));
       }, {
-        value: "public static int myScript(){return 100;}",
+        value: "public class MyOpMode extends LinearOpMode {\n@Override\npublic void runOpMode() {\n// move in circles forever\nwhile (opModeIsActive()) {\nfrontLeft.setPower(1.0);\nfrontLeft.setPower(1.0);\nfrontLeft.setPower(1.0);\nfrontLeft.setPower(1.0);\n}\n}\n}\n",
         mode: "text/x-java",
         lineNumbers: true,
         theme: "darcula",
@@ -480,6 +481,19 @@
         autocorrect: true,
         autoCloseBrackets: true,
       });
+      autoFormatSelection();
+    }
+
+    function getSelectedRange() {
+      return { from: editor.getCursor(true), to: editor.getCursor(false) };
+    }
+
+    function autoFormatSelection() {
+      var cursor = editor.getCursor();
+      CodeMirror.commands["selectAll"](editor);
+      var range = getSelectedRange();
+      editor.autoFormatRange(range.from, range.to);
+      editor.setCursor(cursor);
     }
 
     function prepareUiToSaveProgram() {

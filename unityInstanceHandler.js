@@ -11,7 +11,7 @@ function check() {
             alreadySetPlayMode = true;
         }
         if (playMode == "Autonomous") {
-            setTimeout(writeMotorPowers, 500);
+            setTimeout(writeMotorPowers, 100);
         }
     } else {
         setTimeout(check, 500);
@@ -26,10 +26,10 @@ function writeMotorPowers() {
     var motor2 = motorPowers[Object.keys(motorPowers)[1]];
     var motor3 = motorPowers[Object.keys(motorPowers)[2]];
     var motor4 = motorPowers[Object.keys(motorPowers)[3]];
-    // var motor5 = motorPowers[Object.keys(motorPowers)[0]];
-    // var motor6 = motorPowers[Object.keys(motorPowers)[0]];
-    // var motor7 = motorPowers[Object.keys(motorPowers)[0]];
-    // var motor8 = motorPowers[Object.keys(motorPowers)[0]];
+    var motor5 = motorPowers[Object.keys(motorPowers)[4]];
+    var motor6 = motorPowers[Object.keys(motorPowers)[5]];
+    var motor7 = motorPowers[Object.keys(motorPowers)[6]];
+    var motor8 = motorPowers[Object.keys(motorPowers)[7]];
     UnityInstance.SendMessage("PhotonNetworkPlayer(Clone)", "setFrontLeftVel", motor1);
     UnityInstance.SendMessage("PhotonNetworkPlayer(Clone)", "setFrontRightVel", motor2);
     UnityInstance.SendMessage("PhotonNetworkPlayer(Clone)", "setBackLeftVel", motor3);

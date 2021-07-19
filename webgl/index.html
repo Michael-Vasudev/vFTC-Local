@@ -31,11 +31,11 @@
   </div>
   <script>
     var buildUrl = "Build";
-    var loaderUrl = buildUrl + "/VirtualFTC Builds (webgl).loader.js";
+    var loaderUrl = buildUrl + "/Webgl.loader.js";
     var config = {
-      dataUrl: buildUrl + "/VirtualFTC Builds (webgl).data",
-      frameworkUrl: buildUrl + "/VirtualFTC Builds (webgl).framework.js",
-      codeUrl: buildUrl + "/VirtualFTC Builds (webgl).wasm",
+      dataUrl: buildUrl + "/Webgl.data",
+      frameworkUrl: buildUrl + "/Webgl.framework.js",
+      codeUrl: buildUrl + "/Webgl.wasm",
       streamingAssetsUrl: "StreamingAssets",
       companyName: "VirtualFTC",
       productName: "Robot Simulator",
@@ -89,6 +89,37 @@
       });
     };
     document.body.appendChild(script);
+
+    var frontLeftEncoders = 0;
+    var frontRightEncoders = 0;
+    var backLeftEncoders = 0;
+    var backRightEncoders = 0;
+
+    function setFrontLeftEncoders(encoders) {
+      frontLeftEncoders = encoders;
+      updateEncoderLocalStorage();
+    }
+    function setFrontRightEncoders(encoders) {
+      frontRightEncoders = encoders;
+      updateEncoderLocalStorage();
+    }
+    function setBackLeftEncoders(encoders) {
+      backLeftEncoders = encoders;
+      updateEncoderLocalStorage();
+    }
+    function setBackRightEncoders(encoders) {
+      backRightEncoders = encoders;
+      updateEncoderLocalStorage();
+    }
+
+    function updateEncoderLocalStorage() {
+      var obj = new Object();
+      obj.flEncoders = frontLeftEncoders;
+      obj.frEncoders = frontRightEncoders;
+      obj.blEncoders = backLeftEncoders;
+      obj.brEncoders = backRightEncoders;
+      localStorage.setItem('motorEncoders', JSON.stringify(obj));
+    }
   </script>
 </body>
 

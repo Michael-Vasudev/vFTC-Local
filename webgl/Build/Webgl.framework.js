@@ -14661,19 +14661,15 @@ function _unsetenv(name) {
  return 0;
 }
 function _updateBackLeftEncoders(encoders) {
- console.log("BL ENCODERS: " + encoders);
  setBackLeftEncoders(encoders);
 }
 function _updateBackRightEncoders(encoders) {
- console.log("BR ENCODERS: " + encoders);
  setBackRightEncoders(encoders);
 }
 function _updateFrontLeftEncoders(encoders) {
- console.log("FL ENCODERS: " + encoders);
  setFrontLeftEncoders(encoders);
 }
 function _updateFrontRightEncoders(encoders) {
- console.log("FR ENCODERS: " + encoders);
  setFrontRightEncoders(encoders);
 }
 function _utime(path, times) {
